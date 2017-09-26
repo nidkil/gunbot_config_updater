@@ -1,0 +1,17 @@
+{
+  "gunbot": {
+    "location": "",
+    "config": "config.js",
+    "start": "pm2 start gunthy-linx64 --name=gunbot|gui|3.3.3+",
+    "stop": "pm2 stop gunthy-linx64 --name=gunbot|gui|3.3.3+"
+  },
+  "gui": {
+    "enabled": true,
+    "gunbotVersion": "3.3.3+",
+    "config": "gui-bots.json",
+    "start": "pm2 start gunthy-gui-linux-x64",
+    "stop": "pm2 stop gunthy-gui-linux-x64"
+  },
+  "backup": true,
+  "testMode": false
+}
