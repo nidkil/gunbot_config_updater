@@ -62,4 +62,4 @@ The following still needs to be implemted:
 * Clean up code to meet DRY principle
 * Add dispkay to consol instead off showing logfile
 * Automatically install dependencies
-
+* Add risk indicator to trade pairs and make configurable untill which risk level to include
