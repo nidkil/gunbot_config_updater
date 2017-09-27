@@ -45,3 +45,21 @@ The following command line arguments are supported:
     -q, --quiet     no output
     --version       show program's version number and exit
 ```
+
+# Done
+
+The has been implemented:
+
+# To do
+
+The following still needs to be implemted:
+
+* Make the script self running so it can monitor for changes at set intervals
+* Clean up response handling so that json objects can be deserialized to python objects and vice versa
+* Handle Tradeview integration
+* Add Telegram integration to inform when the config has been updated
+* Log to file
+* Clean up code to meet DRY principle
+* Add dispkay to consol instead off showing logfile
+* Automatically install dependencies
+
