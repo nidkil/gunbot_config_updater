@@ -61,6 +61,6 @@ The following still needs to be implemted:
 * Add Telegram integration to inform when the config has been updated
 * Log to file
 * Clean up code to meet DRY principle
-* Add dispkay to consol instead off showing logfile
+* Add display to consol instead off showing logfile
 * Automatically install dependencies
 * Add risk indicator to trade pairs and make configurable untill which risk level to include
