@@ -37,13 +37,14 @@ The following command line arguments are supported:
     url             url to retrieve Gunbot configuration from
  
   optional arguments:
-    -h, --help      show this help message and exit
-    -r, --rollback  rollback to the previous configuration
-    -c, --changed   only update if web page changed
-    -t, --testmode  create test configuration files only
-    -v, --verbose   increase output verbosity
-    -q, --quiet     no output
-    --version       show program's version number and exit
+    -h, --help       show this help message and exit
+    -r, --rollback   rollback to the previous configuration
+    -c, --changed    only update if web page changed
+    -o, --onlycheck  only check if web page changed
+    -t, --testmode   create test configuration files only
+    -v, --verbose    increase output verbosity
+    -q, --quiet      no output
+    --version        show program's version number and exit
 ```
 
 # Done
