@@ -20,7 +20,8 @@ from check_webpage_updated import WebPageMonitor
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-DEFAULT_URL = 'https://pastebin.com/raw/SYTkqVDQ'
+# Use Dante's Pastbin as default url
+DEFAULT_URL = 'https://pastebin.com/raw/WSZdAP1m'
 
 
 class GunbotConfigHandler(object):
@@ -160,8 +161,9 @@ class GunbotConfigUpdater(object):
                     pair_config['config'] = {}
                     pair_config['config']['strategy'] = loaded_pair_config['strategy']
                     pair_config['config']['override'] = {}
-                    for key in loaded_pair_config['override']:
-                        pair_config['config']['override'][key] = loaded_pair_config['override'][key]
+                    if 'overrride' in loaded_pair_config:
+                        for key in loaded_pair_config['override']:
+                            pair_config['config']['override'][key] = loaded_pair_config['override'][key]
                     gui_config.append(pair_config.copy())
         self.__write_json_to_file(self.config_handler.gunthy_gui_config, gui_config, True)
 
@@ -194,21 +196,22 @@ class GunbotConfigUpdater(object):
             logging.info("Deleting backup configuration file '{}'".format(backup_path))
             os.remove(backup_path)
 
-    def __restart_gunthy_gui(self):
-        cmd_stop = self.config_handler.gunbot_stop
-        cmd_start = self.config_handler.gunbot_start
-        cmd_gui_stop = self.config_handler.gunthy_gui_stop
-        cmd_gui_start = self.config_handler.gunthy_gui_start
+    def __exec_cmd(self, cmd):
         if self.config_handler.test_mode:
-            logging.info("Gunbot stop = {}".format(cmd_stop))
-            logging.info("Gunthy GUI stop = {}".format(cmd_gui_stop))
-            logging.info("Gunthy GUI start = {}".format(cmd_gui_start))
-            logging.info("Gunbot start = {}".format(cmd_start))
+            logging.info("Command: ".format(cmd))
         else:
-            subprocess.check_output(cmd_stop.split(' '))
-            subprocess.check_output(cmd_gui_stop.split(' '))
-            subprocess.check_output(cmd_gui_start.split(' '))
-            subprocess.check_output(cmd_start.split(' '))
+            try:
+                logging.debug("Command: {}".format(cmd))
+                output = subprocess.check_output(cmd.split(' '))
+                logging.debug("Command output: {}".format(output))
+            except subprocess.CalledProcessError as e:
+                logging.error("Error executing command [exit code= {}, message=\n{}]".format(e.returncode, e.output))
+
+    def __restart_gunthy_gui(self):
+        self.__exec_cmd(self.config_handler.gunbot_stop)
+        self.__exec_cmd(self.config_handler.gunbot_start)
+        self.__exec_cmd(self.config_handler.gunthy_gui_stop)
+        self.__exec_cmd(self.config_handler.gunthy_gui_start)
 
     def execute(self, config_url):
         logging.info("Loading Gunbot configuration from {}".format(config_url))
@@ -233,6 +236,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--rollback', help='rollback to the previous configuration', action='store_true')
     parser.add_argument('url', nargs='?', help='url to retrieve Gunbot configuration from')
     parser.add_argument('-c', '--changed', help='only update if web page changed', action='store_true')
+    parser.add_argument('-o', '--onlycheck', help='only check if web page changed', action='store_true')
     parser.add_argument('-t', '--testmode', help='create test configuration files only', action='store_true')
     verbose_group = parser.add_mutually_exclusive_group()
     verbose_group.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true')
@@ -242,12 +246,15 @@ if __name__ == '__main__':
     name = os.path.basename(os.path.abspath(__file__))
 
     if args.url is None and not args.rollback:
-        # Use Dante's default pastbin url
         args.url = DEFAULT_URL
     if args.url is not None and args.rollback:
         print '{}: url and rollback cannot be specified at the same time'.format(args.prog)
         print 'try \'{} --help\' for more information.'.format(args.prog)
         exit(-2)
+    if args.onlycheck:
+        monitor = WebPageMonitor(args.url, force_use_hash=True)
+        print "Web page changed: {}".format(monitor.check())
+        exit(5)
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
     if args.quiet:
